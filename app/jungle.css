@@ -1,0 +1,51 @@
+/* Forest palette and shared dialog geometry. */
+body{background:#071b15;background-image:radial-gradient(ellipse at 12% 0%,#214c32 0%,transparent 48%),radial-gradient(ellipse at 100% 70%,#12392d 0%,transparent 45%);background-attachment:fixed}
+.game-shell{background:transparent}
+.game-table{background:radial-gradient(ellipse at center,#285c3e,#103b2b 70%,#08271f);border-color:#8f7441;box-shadow:inset 0 0 45px #031b19,0 0 0 2px #b4a26955}
+.topbar{border-color:#587c4f66}
+.panel,.rooms,.your-hand,.game-status,.game-start{background:linear-gradient(145deg,#153629,#10281f)!important;border-color:#577349!important}
+.resolution.actions{background:linear-gradient(145deg,#284c2c,#132f25);border-color:#96aa65}
+.action-grid .green{background:#2b5133}
+.primary{background:#dec37c;color:#14271b;border-color:#e5d398}
+.secondary{background:#244433;color:#f0ecd7;border-color:#7b9160}
+.game-dialog,[data-slot=alert-dialog-content]{background:#102c24;color:#f3efdc;border-color:#78935e}
+[data-slot=dialog-content],[data-slot=alert-dialog-content]{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:24px}
+[data-slot=dialog-header]{padding-right:42px;min-width:0}
+[data-slot=dialog-title]{line-height:1.5;overflow-wrap:anywhere}
+[data-slot=dialog-content]>[data-slot=dialog-close]{position:absolute!important;inset:12px 12px auto auto!important;display:flex!important;align-items:center;justify-content:center;width:36px!important;height:36px!important;min-width:36px;min-height:36px;padding:0!important;border:1px solid #aac392;border-radius:10px;background:#294938;color:#fff7d8;opacity:1!important;z-index:5;transform:none!important;box-shadow:0 2px 8px #0005}
+[data-slot=dialog-content]>[data-slot=dialog-close] svg{display:block;width:18px!important;height:18px!important;flex:none}
+[data-slot=dialog-content]>[data-slot=dialog-close]:hover{background:#426748}
+[data-slot=dialog-content]>[data-slot=dialog-close]:focus-visible{outline:3px solid #f1d487;outline-offset:2px}
+.notice>button,.seat>.icon-button{display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;line-height:1;padding:0;border-radius:8px;flex-shrink:0}
+.guide-switch{margin:0 0 24px}
+.guide-switch [data-slot=tabs-list]{height:auto;flex-wrap:wrap;gap:6px;background:#163a2b;padding:6px;border:1px solid #647e4d}
+.guide-switch [data-slot=tabs-trigger]{font-size:16px;padding:10px 18px;white-space:normal}
+.rules-list article{background:#0b251dc9;border:1px solid #42663d;border-radius:14px;padding:20px;margin-bottom:14px}
+.rules-list p{font-size:16px;line-height:1.9}
+.rule-example{background:#213f29!important;color:#f1ecd5!important;border-left-color:#d9c078}
+.challenge-summary{display:grid;gap:2px;margin:0 0 8px;padding:8px 12px;border:1px solid #efd38e;background:#483525;border-radius:9px;color:#fff1c9}
+.challenge-summary strong{font-size:16px;overflow-wrap:anywhere}
+.challenge-summary span,.challenge-summary small{font-size:14px;line-height:1.5}
+.compact-match .decision-loss .claim-icon{display:none}
+.compact-match .decision-loss .inline>div{min-width:0;width:100%}
+.compact-match .table-center{grid-area:auto!important;grid-column:auto!important;grid-row:auto!important;max-width:calc(100% - 16px);overflow-wrap:anywhere}
+.compact-match .opponent{min-width:0;max-width:100%}
+.compact-match .opponent-info strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compact-match .table-heading .button-row{flex-shrink:0}
+.game-dialog .button-row,.game-dialog .attack-targets{min-width:0}
+.match-cast-item,.attack-target{min-width:0}
+@media(max-width:600px){
+ [data-slot=dialog-content],[data-slot=alert-dialog-content]{padding:18px;max-width:calc(100vw - 20px)!important}
+ [data-slot=dialog-header]{padding-right:36px}
+ [data-slot=dialog-content]>[data-slot=dialog-close]{inset:8px 8px auto auto!important}
+ .compact-match .table-heading h1{max-width:20vw}
+ .compact-match .table-heading .secondary{font-size:12px;gap:3px;padding:3px 5px}
+ .compact-match .table-heading .secondary svg{width:13px;height:13px}
+ .compact-match .challenge-summary{padding:5px 8px;gap:1px;margin-bottom:5px}
+ .compact-match .challenge-summary strong{font-size:14px}
+ .compact-match .challenge-summary span,.compact-match .challenge-summary small{font-size:12px}
+ .rules-list article{padding:14px;gap:12px}
+ .guide-switch [data-slot=tabs-trigger]{padding:8px 10px;font-size:14px}
+ .compact-match .decision-loss .response-controls>.muted{font-size:12px;margin:0}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
