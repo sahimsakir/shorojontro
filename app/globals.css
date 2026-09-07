@@ -29,3 +29,64 @@ body{background:radial-gradient(ellipse at 50% 0,#1b3438 0,transparent 65%),#080
 /* Larger opponent cards with an unmistakable revealed/lost state. */
 .opponent-cards .lost img{opacity:.8;filter:grayscale(.8);border:2px solid #ee8f85}.opponent-cards .lost span{top:auto;bottom:-2px;left:-2px;right:-2px;background:#802c32;color:#fff2e2;border:1px solid #ffc1a4;border-radius:4px;font-size:12px;line-height:1.5;letter-spacing:0;font-weight:700;z-index:1}.opponent-cards .lost{transform:none!important}
 @media(max-width:860px){.compact-match .game-table{container-type:size;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:4px 8px;padding:5px 7px 26px}.compact-match .game-table[data-count='2'],.compact-match .game-table[data-count='3']{grid-template-rows:minmax(0,1fr)}.compact-match .game-table[data-count='4']{grid-template-columns:repeat(2,minmax(0,1fr))}.compact-match .game-table .opponent{grid-row:auto!important;grid-column:auto!important;align-self:center;min-height:0}.compact-match .opponent-cards>div{width:clamp(26px,calc(24cqh - 12px),44px)!important}.compact-match .game-table[data-count='2'] .opponent-cards>div,.compact-match .game-table[data-count='3'] .opponent-cards>div{width:clamp(36px,24cqh,52px)!important}.compact-match .opponent-info{flex-wrap:nowrap;gap:4px;align-items:center}.compact-match .opponent-info strong{width:auto;font-size:12px!important;max-height:17px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:block;min-width:0}.compact-match .opponent-info .coin-count{flex-shrink:0}.compact-match .opponent-cards{gap:5px}.compact-match .life-pips{margin-top:4px}.compact-match .opponent-cards .lost span{font-size:12px;line-height:1.3;padding:1px 0}.compact-match .opponent.eliminated{opacity:.85}}
+
+/* One viewport game surface on desktop, tablet and phone. */
+.resolution.decision-response{background:linear-gradient(135deg,#244b79,#172d50);border-color:#83baff;color:#f4f8ff}
+.resolution.decision-block{background:linear-gradient(135deg,#513b77,#30234b);border-color:#c6a0ff;color:#faf4ff}
+.resolution.decision-loss{background:linear-gradient(135deg,#71343e,#44212e);border-color:#ffa3aa;color:#fff3f3}
+.resolution.decision-share,.resolution.decision-exchange{background:linear-gradient(135deg,#15575d,#123c48);border-color:#7dd9dc;color:#efffff}
+.resolution .muted,.resolution .small-note{color:#dce5f1}
+.match-ticker{background:#263a61;border-color:#7796ca}
+.victory-dialog{text-align:center;border:2px solid #eac476!important;background:radial-gradient(ellipse at top,#354e43,#101c24)!important}
+.victory-trophy{width:60px;height:60px;margin:0 auto 12px;color:#f4cc78}
+.victory-cards{display:flex;justify-content:center;gap:20px}
+.victory-cards img{width:110px;border-radius:10px}
+.victory-cards p{margin-top:8px;color:#ffe1a5}
+.compact-match .game-table[data-count='1']{grid-template-columns:1fr;grid-template-rows:1fr}
+.compact-match .game-table[data-count='1'] .opponent{grid-column:1!important;grid-row:1!important}
+.compact-match .game-table[data-count='1'] .opponent-cards>div{width:clamp(40px,20cqh,80px)!important}
+@media(min-width:861px){
+.compact-match{height:100dvh;overflow:hidden;padding:0 20px 10px;display:flex;flex-direction:column}
+.compact-match>[data-slot=tabs]{flex:1;min-height:0;display:flex;flex-direction:column;gap:0}
+.compact-match .topbar{height:58px;min-height:58px;flex-shrink:0}
+.compact-match [data-slot=tabs-content][data-state=active]{display:flex;flex-direction:column;flex:1;min-height:0;margin:0}
+.compact-match .table-heading{padding:6px 0;min-height:48px}
+.compact-match .table-heading h1{font-size:20px;margin:0}
+.compact-match .table-heading .eyebrow{font-size:12px}
+.compact-match .match-layout{flex:1;min-height:0;display:flex}
+.compact-match .match-main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);grid-template-rows:36px minmax(0,1fr) 120px 44px;grid-template-areas:'status status' 'board decision' 'hand decision' 'ticker ticker';gap:10px}
+.compact-match .game-status{padding:5px 12px}
+.compact-match .game-table{height:100%;min-height:0;container-type:size;padding:10px 15px 32px;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));border-radius:30px;position:relative}
+.compact-match .game-table .opponent{grid-row:auto!important;grid-column:auto!important;align-self:center;padding:3px!important}
+.compact-match .game-table[data-count='1'],.compact-match .game-table[data-count='2'],.compact-match .game-table[data-count='3']{grid-template-rows:1fr}
+.compact-match .game-table[data-count='2']{grid-template-columns:repeat(2,minmax(0,1fr))}
+.compact-match .opponent-cards>div{width:clamp(28px,18cqh,65px)!important}
+.compact-match .opponent-info{margin-bottom:3px}
+.compact-match .seat-target{display:none}
+.compact-match .table-center{position:absolute;bottom:4px;left:10px;right:10px;display:flex;justify-content:center;align-items:center;gap:8px}
+.compact-match .deck-art{display:none}
+.compact-match .table-center>span{font-size:16px;margin:0}
+.compact-match .tax-badge{margin:0;display:flex;gap:6px}
+.compact-match .your-hand{margin:0;height:120px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+.compact-match .your-hand .section-title{margin:0}
+.compact-match .hand-card{width:60px;transform:none!important}
+.compact-match .hand-card>span{font-size:12px}
+.compact-match .resolution{min-height:0;padding:14px;overflow:auto}
+.compact-match .action-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.compact-match .action-grid>button{min-height:58px;padding:7px}
+.compact-match .action-grid img,.compact-match .action-grid>button>svg{display:none}
+.compact-match .action-grid strong{font-size:14px}
+.compact-match .action-grid small{font-size:12px}
+.compact-match .match-ticker{grid-area:ticker}
+.compact-match .match-sidebar,.compact-match footer{display:none}
+.compact-match .winner{display:flex;flex-direction:column;align-items:center;justify-content:center}
+}
+@media(max-width:860px) and (orientation:landscape){
+.compact-match .match-main{grid-template-columns:minmax(0,1.2fr) minmax(250px,1fr);grid-template-rows:28px minmax(0,1fr) 65px 28px;grid-template-areas:'status status' 'board decision' 'hand decision' 'ticker ticker'}
+.compact-match .game-table{grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:1fr}
+.compact-match .game-table[data-count='4']{grid-template-columns:repeat(4,minmax(0,1fr))}
+.compact-match .your-hand{height:65px}
+.compact-match .hand-card .image-button{width:30px}
+.compact-match .resolution{padding:5px}
+.compact-match .action-grid>button{min-height:35px}
+}

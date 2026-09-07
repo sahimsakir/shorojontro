@@ -14,6 +14,12 @@ try{
  const db=await mf.getD1Database('DB');for(const sql of readFileSync('drizzle/0000_organic_blizzard.sql','utf8').split('--> statement-breakpoint'))if(sql.trim())await db.prepare(sql).run();
  const users=[];for(let i=0;i<7;i++){const r=await mf.dispatchFetch('https://game.test/api/session');assert.equal(r.status,200,await r.clone().text());const cookie=r.headers.get('set-cookie').split(';')[0];const s=await r.json();users.push({cookie,id:s.id});}
  async function call(i,path,body){const r=await mf.dispatchFetch('https://game.test'+path,{method:body?'POST':'GET',headers:{cookie:users[i].cookie,...(body?{'Content-Type':'application/json',Origin:'https://game.test'}:{})},body:body?JSON.stringify(body):undefined});const data=await r.json();return {status:r.status,...data}}
+ for(const origin of ['https://shorojontro-nine.vercel.app','https://unrelated.vercel.app']){
+  const response=await mf.dispatchFetch('https://game.test/api/session',{method:'POST',headers:{cookie:users[0].cookie,'Content-Type':'application/json',Origin:origin},body:JSON.stringify({name:'Proxy player'})});
+  assert.equal(response.status,origin==='https://shorojontro-nine.vercel.app'?200:400);
+ }
+ const duo=await mf.dispatchFetch('https://game.test/api/game',{method:'POST',headers:{cookie:users[0].cookie,'Content-Type':'application/json',Origin:'https://shorojontro-nine.vercel.app'},body:JSON.stringify({op:'create',name:'Two player',max:2,private:true,password:'secret42'})});
+ assert.equal(duo.status,200);assert.equal((await duo.json()).game.max,2);
  for(let i=0;i<7;i++)assert.equal((await call(i,'/api/session',{name:'Player '+i})).status,200);
  let result=await call(0,'/api/game',{op:'create',name:'Private test',max:6,private:true,password:'secret42'});assert.equal(result.status,200,JSON.stringify(result));const code=result.game.code;
  assert.equal((await call(1,'/api/game')).rooms.length,0,'private rooms are hidden');

@@ -1,6 +1,6 @@
 # Shorojontro
 
-A responsive Bengali bluffing card game for 3–6 human and computer players. Uses the user's custom nine-card artwork and confirmed house rules. Public lobby, password-protected private rooms, host-selected cast, ready checks, live polling, challenges, blocks, exchanges, tax, rematches and reconnection.
+A responsive Bengali bluffing card game for 2–6 human and computer players. Uses the user's custom nine-card artwork and confirmed house rules. Public lobby, password-protected private rooms, host-selected cast, ready checks, live polling, challenges, blocks, exchanges, tax, rematches and reconnection.
 
 ## Architecture
 
