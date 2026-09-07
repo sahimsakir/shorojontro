@@ -90,3 +90,19 @@ body{background:radial-gradient(ellipse at 50% 0,#1b3438 0,transparent 65%),#080
 .compact-match .resolution{padding:5px}
 .compact-match .action-grid>button{min-height:35px}
 }
+
+body{font-family:'Hind Siliguri','Noto Sans Bengali','Nirmala UI',sans-serif}
+h1,h2,h3,button,input,[data-slot=dialog-title]{font-family:inherit}
+.victory-dialog{background:radial-gradient(ellipse at top,#634192 0%,#35204f 52%,#21152f 100%)!important;border-color:#e8c584!important;color:#fff4e3}
+.victory-dialog [data-slot=dialog-description]{color:#e3d3ee}
+.victory-dialog .secondary{background:#4b306b;border-color:#b596d0;color:#fff4e3}
+.match-cast-list{display:grid;gap:9px}
+.match-cast-item{display:flex;align-items:center;gap:14px;padding:9px 12px;border:1px solid #58777a;border-radius:12px;text-align:left;background:#173c48;color:#f4f0e6}
+.match-cast-item.purple{background:#3c2854;border-color:#9174b2}
+.match-cast-item.black{background:#242736;border-color:#7b8299}
+.match-cast-item.green{background:#1a4435;border-color:#6b9b7c}
+.match-cast-item>img{width:44px;aspect-ratio:2/3;object-fit:cover;border-radius:5px;flex-shrink:0}
+.match-cast-item>span{flex:1;min-width:0}
+.match-cast-item strong{display:block;font-size:18px}
+.match-cast-item small{display:block;font-size:14px;color:#e1e3e8}
+@media(max-width:600px){.compact-match .table-heading h1{max-width:25vw}.compact-match .table-heading .button-row{gap:5px}.match-cast-item{gap:10px;padding:7px 10px}.match-cast-item>img{width:37px}}
