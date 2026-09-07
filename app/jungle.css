@@ -1,9 +1,18 @@
-/* Forest palette and shared dialog geometry. */
-body{background:#071b15;background-image:radial-gradient(ellipse at 12% 0%,#214c32 0%,transparent 48%),radial-gradient(ellipse at 100% 70%,#12392d 0%,transparent 45%);background-attachment:fixed}
-.game-shell{background:transparent}
-.game-table{background:radial-gradient(ellipse at center,#285c3e,#103b2b 70%,#08271f);border-color:#8f7441;box-shadow:inset 0 0 45px #031b19,0 0 0 2px #b4a26955}
+/* Illustrated scenes stay behind the interface and never intercept input. */
+body{background:#061914}
+.game-shell{background:transparent;isolation:isolate}
+.jungle-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;background-color:#061914;background-image:linear-gradient(#03141022,#03141055),var(--jungle-art);background-size:cover;background-position:center;background-repeat:no-repeat}
+[data-scene=play]{--jungle-art:url('/backgrounds/play.webp')}
+[data-scene=characters]{--jungle-art:url('/backgrounds/characters.webp')}
+[data-scene=rules]{--jungle-art:url('/backgrounds/rules.webp')}
+.game-shell .topbar{background:#071c16d9;padding-inline:14px;border-radius:0 0 16px 16px}
+.game-shell .page-intro{width:fit-content;max-width:100%;margin-block:24px;padding:24px;border:1px solid #819d6255;border-radius:18px;background:#071c16df}
+.game-shell .cast-card{background:#0b251de8}
+.game-shell footer{color:#eee8cc;text-shadow:0 2px 4px #000;background:#061914b3;border-radius:12px;padding:12px}
+.game-shell .table-heading{background:#071c16d9;border-radius:12px;padding-inline:10px}
+.game-table{background-image:linear-gradient(#041b16a6,#041b16b8),var(--jungle-art);background-color:#08271f;background-size:100% 100%;background-position:center;border-color:#8f7441;box-shadow:inset 0 0 45px #031b19,0 0 0 2px #b4a26955}
 .topbar{border-color:#587c4f66}
-.panel,.rooms,.your-hand,.game-status,.game-start{background:linear-gradient(145deg,#153629,#10281f)!important;border-color:#577349!important}
+.panel,.rooms,.your-hand,.game-status,.game-start{background:linear-gradient(145deg,#153629e8,#10281fe8)!important;border-color:#577349!important}
 .resolution.actions{background:linear-gradient(145deg,#284c2c,#132f25);border-color:#96aa65}
 .action-grid .green{background:#2b5133}
 .primary{background:#dec37c;color:#14271b;border-color:#e5d398}
@@ -35,6 +44,9 @@ body{background:#071b15;background-image:radial-gradient(ellipse at 12% 0%,#214c
 .game-dialog .button-row,.game-dialog .attack-targets{min-width:0}
 .match-cast-item,.attack-target{min-width:0}
 @media(max-width:600px){
+ .jungle-backdrop{background-size:100% auto;background-position:center top;background-repeat:repeat-y}
+ .game-shell .page-intro{padding:18px;margin-block:18px}
+ .game-shell .topbar{padding-inline:8px}
  [data-slot=dialog-content],[data-slot=alert-dialog-content]{padding:18px;max-width:calc(100vw - 20px)!important}
  [data-slot=dialog-header]{padding-right:36px}
  [data-slot=dialog-content]>[data-slot=dialog-close]{inset:8px 8px auto auto!important}
