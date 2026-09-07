@@ -2,5 +2,8 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/client",
-  "rewrites": [{ "source": "/api/:path*", "destination": "https://shorojontro.sahimsakir.chatgpt.site/api/:path*" }]
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://shorojontro.sahimsakir.chatgpt.site/api/:path*" },
+    { "source": "/(.*)", "destination": "https://shorojontro.sahimsakir.chatgpt.site/$1" }
+  ]
 }
