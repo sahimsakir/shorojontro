@@ -53,3 +53,36 @@ test('one player cannot start; two players can start',()=>{
  const g=newGame('ABC234','Test',false,2,'a','A');g.players[0].ready=true;
  assert.throws(()=>start(g));assert.equal(setup(undefined,2).status,'playing');
 });
+
+test('final assassination challenge costs two lives and preserves the proven winning card',()=>{
+ for(const role of ['brahma','betal']){
+  const g=setup(['bir','orun',role,'kalu','chor'],2);give(g,'a',role);
+  g.players[0].cards[1].alive=false;g.players[0].coins=5;
+  const hand=structuredClone(g.players[0].cards),deck=[...g.deck];
+  act(g,'a',{action:role,target:'b'});respond(g,'b',{choice:'challenge'});
+  assert.match(g.waiting.message,/চ্যালেঞ্জে/);
+  assert.deepEqual(g.deck,deck);assert.deepEqual(g.players[0].cards,hand);
+  lose(g);assert.equal(g.status,'playing');assert.equal(g.waiting.type,'loss');
+  assert.match(g.waiting.message,/আক্রমণে/);
+  lose(g);assert.equal(g.status,'finished');assert.equal(g.winner,'a');
+  assert.deepEqual(g.deck,deck);assert.deepEqual(view(g,'b').players[0].cards,hand);
+  invariant(g);
+ }
+});
+test('assassination bluff with only a dead proof loses challenge and cancels attack',()=>{
+ const g=setup(undefined,2);noRole(g,'a','brahma');give(g,'a','brahma');
+ g.players[0].cards[0].alive=false;
+ if(g.players[0].cards[1].role==='brahma'){
+  const i=g.deck.findIndex(r=>r!=='brahma');
+  [g.players[0].cards[1].role,g.deck[i]]=[g.deck[i],g.players[0].cards[1].role];
+ }
+ g.players[0].coins=3;act(g,'a',{action:'brahma',target:'b'});
+ respond(g,'b',{choice:'challenge'});assert.equal(g.waiting.actor,'a');
+ lose(g);assert.equal(g.winner,'b');assert.ok(g.players[1].cards.every(c=>c.alive));invariant(g);
+});
+test('non-final assassination still exchanges its truthful proof',()=>{
+ const g=setup();give(g,'a','brahma');g.players[0].coins=3;
+ act(g,'a',{action:'brahma',target:'b'});respond(g,'b',{choice:'challenge'});
+ assert.ok(g.log.some(e=>e.text.includes('ডেকে ফিরিয়ে নতুন কার্ড নিয়েছে')));
+ lose(g);lose(g);assert.equal(g.status,'playing');invariant(g);
+});
