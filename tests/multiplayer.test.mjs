@@ -28,6 +28,9 @@ try{
  for(let i=1;i<6;i++){result=await call(i,'/api/game',{op:'join',code,password:'secret42'});assert.equal(result.status,200,JSON.stringify(result))}
  assert.equal((await call(6,'/api/game',{op:'join',code,password:'secret42'})).status,400,'room capacity enforced');
  let g=(await call(0,'/api/game?room='+code)).game;
+ assert.equal(g.series.total,5);
+ assert.equal((await call(1,'/api/game',{op:'series',code,revision:g.revision,rounds:3})).status,400,'only host configures series');
+ result=await call(0,'/api/game',{op:'series',code,revision:g.revision,rounds:3});assert.equal(result.status,200);g=result.game;assert.equal(g.series.total,3);
  assert.equal((await call(1,'/api/game',{op:'start',code,revision:g.revision})).status,400,'host permission');
  for(let i=0;i<6;i++){g=(await call(i,'/api/game?room='+code)).game;result=await call(i,'/api/game',{op:'ready',code,revision:g.revision,ready:true});assert.equal(result.status,200)}
  g=result.game;result=await call(0,'/api/game',{op:'start',code,revision:g.revision});assert.equal(result.status,200);g=result.game;
@@ -38,6 +41,8 @@ try{
  for(const i of [0,2,3,4,5]){g=(await call(i,'/api/game?room='+code)).game;result=await call(i,'/api/game',{op:'respond',code,revision:g.revision,choice:'pass'});assert.equal(result.status,200,JSON.stringify(result))}
  g=result.game;assert.equal(g.players[1].coins,5);assert.equal(g.turn,2);
  const restored=await call(0,'/api/session');assert.equal(restored.room,code,'session reconnect finds room');
+ const recovered=(await call(0,'/api/game?room='+restored.room)).game;
+ assert.equal(recovered.series.round,1);assert.equal(recovered.series.total,3);assert.equal(recovered.claims[0].outcome,'accepted');assert.equal(recovered.players[0].id,users[0].id);
  const publicRoom=await call(6,'/api/game',{op:'create',name:'Public test',max:3,private:false});assert.equal(publicRoom.status,200);const list=await call(0,'/api/game');assert.equal(list.rooms.length,1);assert.equal(list.rooms[0].code,publicRoom.game.code);assert.equal(list.rooms[0].state,undefined);
 
  // Host-only bots, readiness, capacity, a one-human start and autonomous progress.
