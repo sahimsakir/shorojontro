@@ -25,6 +25,13 @@ test('claim history distinguishes acceptance from proof without revealing replac
  g=tutorialGame(0);act(g,'you',{action:'bir'});respond(g,'guide',{choice:'pass'});assert.equal(g.claims[0].outcome,'accepted');assert.equal(g.claims[0].challenger,undefined);
  act(g,'guide',{action:'bir'});tick(g,g.waiting.deadline+1,false);assert.equal(g.claims[1].outcome,'accepted');
 });
+test('loss animation receives only the selected public card after choice, including final loss',()=>{
+ const g=tutorialGame(1);act(g,'you',{action:'bir'});respond(g,'guide',{choice:'challenge'});
+ assert.equal(g.reveals.length,0);assert.equal(g.waiting.type,'loss');
+ const selected=g.players[1].cards[0].role;respond(g,'guide',{choice:'lose',index:0});
+ assert.equal(g.reveals.length,1);assert.equal(g.reveals[0].role,selected);assert.equal(g.reveals[0].player,'guide');
+ assert.deepEqual(view(g,'you').reveals,g.reveals);assert.ok(view(g,'you').players[1].cards.filter(c=>c.alive).every(c=>c.role===null));
+});
 test('series awards once, survives serialization, preserves standings through rematches and resets after finale',()=>{
  let g=newGame('ABC234','Series',false,2,'a','A');g.players.push({id:'b',name:'B',coins:2,cards:[],ready:true});configureSeries(g,3);g.players[0].ready=true;
  for(let round=1;round<=3;round++){
