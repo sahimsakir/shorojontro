@@ -86,3 +86,4 @@ test('non-final assassination still exchanges its truthful proof',()=>{
  assert.ok(g.log.some(e=>e.text.includes('ডেকে ফিরিয়ে নতুন কার্ড নিয়েছে')));
  lose(g);lose(g);assert.equal(g.status,'playing');invariant(g);
 });
+test('duel starts with thirty-second turns and transitions after elimination',()=>{const before=Date.now();const two=setup(undefined,2);assert.ok(two.deadline>=before+30000&&two.deadline<=Date.now()+30000);const g=setup();assert.ok(g.deadline>=Date.now()+59000);g.players[2].cards[0].alive=false;g.players[0].coins=7;act(g,'a',{action:'kill',target:'c'});assert.ok(g.waiting.deadline>=Date.now()+24000);lose(g);assert.equal(g.status,'playing');assert.equal(g.players.filter(alive).length,2);assert.ok(g.deadline>=Date.now()+29000&&g.deadline<=Date.now()+30000);assert.ok(view(g,'a').players[1].cards.every(c=>c.role===null));});
