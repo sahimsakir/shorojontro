@@ -32,6 +32,10 @@ test('loss animation receives only the selected public card after choice, includ
  assert.equal(g.reveals.length,1);assert.equal(g.reveals[0].role,selected);assert.equal(g.reveals[0].player,'guide');
  assert.deepEqual(view(g,'you').reveals,g.reveals);assert.ok(view(g,'you').players[1].cards.filter(c=>c.alive).every(c=>c.role===null));
 });
+test('attack effects name the correct target and cancelled bluffs do not emit attacks',()=>{
+ const bluff=tutorialGame(2);respond(bluff,'you',{choice:'challenge'});respond(bluff,'guide',{choice:'lose',index:0});assert.equal(bluff.attacks.length,0);
+ for(const action of ['kill','brahma','betal']){const g=tutorialGame(0);if(action==='betal')g.roles=g.roles.map(r=>r==='brahma'?'betal':r);g.players[0].coins=9;act(g,'you',{action,target:'guide'});if(g.waiting.type==='response')respond(g,'guide',{choice:'pass'});assert.equal(g.attacks.length,1);assert.equal(g.attacks[0].kind,action);assert.equal(g.attacks[0].actor,'you');assert.equal(g.attacks[0].target,'guide');assert.equal(g.waiting.type,'loss');}
+});
 test('series awards once, survives serialization, preserves standings through rematches and resets after finale',()=>{
  let g=newGame('ABC234','Series',false,2,'a','A');g.players.push({id:'b',name:'B',coins:2,cards:[],ready:true});configureSeries(g,3);g.players[0].ready=true;
  for(let round=1;round<=3;round++){
