@@ -10,6 +10,7 @@ import {CARDS,card,bn,RULES,type Role} from '@/lib/game/cards';
 import {PLAY_RULES,ROOM_GUIDE} from '@/lib/game/guide';
 import {TableCard,TableEffects} from '@/components/table-effects';
 import {GameSocial} from '@/components/game-social';
+import {CharacterVoice} from '@/components/character-voice';
 import {BOT_LEVELS,BOT_STYLES} from '@/lib/game/social';
 import {ClaimHistory,SeriesScore,ChallengeAnimation,Tutorial} from '@/components/game-features';
 import type {Game,Player,Waiting} from '@/lib/game/engine';
@@ -84,6 +85,7 @@ export default function Page(){
  <AlertDialog open={leaveConfirm} onOpenChange={setLeaveConfirm}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>এই রুম ছেড়ে যাবেন?</AlertDialogTitle><AlertDialogDescription>{game?.status==='playing'?'বের হলে বাকি জীবনগুলো হারাবেন। রিলোড করলে আপনার আসন থাকবে।':'খালি আসন থাকলে আবার যোগ দিতে পারবেন।'}</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>থাকুন</AlertDialogCancel><AlertDialogAction onClick={()=>move({op:'leave'})}>রুম ছাড়ুন</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
  <Dialog open={scoreOpen} onOpenChange={setScoreOpen}><DialogContent className="game-dialog"><DialogHeader><DialogTitle>আসরের স্কোর</DialogTitle><DialogDescription>এই রুমের রাউন্ডভিত্তিক ফল। Refresh করলেও স্কোর থাকবে। রুমের মেয়াদ শেষ হলে এই আসর আর পাওয়া যাবে না।</DialogDescription></DialogHeader><SeriesScore series={game?.series}/></DialogContent></Dialog>
  <GameSocial game={game} userId={user?.id} busy={busy||offline} send={reaction=>move({op:'react',reaction})}/>
+ {game&&game.status==='playing'&&<CharacterVoice claims={game.claims} room={game.code}/>} 
  <Tutorial open={tutorialOpen} onClose={()=>setTutorialOpen(false)}/>
  {game&&<ChallengeAnimation challenge={game.challenge} room={game.code} players={game.players} waiting={game.waiting} reveals={game.reveals}/>}
  </main>
