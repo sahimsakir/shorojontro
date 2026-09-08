@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import ts from 'typescript';
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 mkdirSync('.sites-runtime/engine-tests',{recursive:true});
-for(const name of ['cards','social','bots','engine']){const s=readFileSync(`lib/game/${name}.ts`,'utf8').replace("'./cards'","'./cards.mjs'").replace("'./bots'","'./bots.mjs'").replace("'./social'","'./social.mjs'");writeFileSync(`.sites-runtime/engine-tests/${name}.mjs`,ts.transpileModule(s,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText)}
+for(const name of ['cards','social','series','bots','engine']){const s=readFileSync(`lib/game/${name}.ts`,'utf8').replace("'./cards'","'./cards.mjs'").replace("'./bots'","'./bots.mjs'").replace("'./social'","'./social.mjs'").replace("'./series'","'./series.mjs'");writeFileSync(`.sites-runtime/engine-tests/${name}.mjs`,ts.transpileModule(s,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText)}
 const {newGame,start,act,respond,tick,leave,view,alive}=await import('../.sites-runtime/engine-tests/engine.mjs');
 function setup(roles=['bir','orun','brahma','kalu','chor'],n=3){const g=newGame('ABC234','Test',false,6,'a','A');for(let i=1;i<n;i++)g.players.push({id:String.fromCharCode(97+i),name:String.fromCharCode(65+i),cards:[],coins:2,ready:true});g.players[0].ready=true;g.roles=roles;start(g);return g}
 function passes(g){let count=0;while(g.waiting?.type==='response'){if(++count>10)throw Error('loop');const w=g.waiting;const id=w.eligible.find(id=>!w.passed.includes(id));respond(g,id,{choice:'pass'})}}

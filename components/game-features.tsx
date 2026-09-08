@@ -3,6 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {bn,card,type Role} from '@/lib/game/cards';
 import type {ClaimRecord,Game,Series} from '@/lib/game/engine';
+import {seriesResult} from '@/lib/game/series';
 import {LESSONS,tutorialGame,tutorialMove} from '@/lib/game/tutorial';
 
 export function ClaimHistory({claims,players,selected,onSelect}:{claims:ClaimRecord[];players:{id:string;name:string}[];selected:string;onSelect:(v:string)=>void}){
@@ -13,10 +14,10 @@ export function ClaimHistory({claims,players,selected,onSelect}:{claims:ClaimRec
 export function SeriesScore({series}:{series?:Series}){
  if(!series)return <p>পরের রাউন্ড থেকে আসরের স্কোর শুরু হবে।</p>;
  const ranked=series.scores.slice().sort((a,b)=>b.wins-a.wins);
- const completed=series.round>=series.total&&series.results.length>=series.total;
+ const completed=seriesResult(series).complete;
  const best=ranked[0]?.wins??0;
  const leaders=ranked.filter(p=>p.wins===best&&best>0).map(p=>p.name);
- return <section className="series-score"><h3>{completed?'আসর শেষ':`আসর · ${bn(series.total)} রাউন্ড`}</h3><p>প্রতি জয়ে ১ পয়েন্ট। সমান সর্বোচ্চ স্কোর হলে যৌথ চ্যাম্পিয়ন।</p>{completed&&<p className="series-champion">{leaders.length?(leaders.length>1?'যৌথ চ্যাম্পিয়ন: ':'আসরের চ্যাম্পিয়ন: ')+leaders.join(', '):'এই আসরে কোনো বিজয়ী নেই।'}</p>}<table><thead><tr><th>খেলোয়াড়</th><th>জয় / পয়েন্ট</th></tr></thead><tbody>{ranked.map(p=><tr key={p.id}><td>{p.name}</td><td>{bn(p.wins)}</td></tr>)}</tbody></table>{!ranked.length&&<p>প্রথম রাউন্ড শুরু হলে স্কোরবোর্ড তৈরি হবে।</p>}<div className="round-results">{series.results.map(r=><p key={r.round}>রাউন্ড {bn(r.round)} <strong>{r.name}{r.winner?' জয়ী':''}</strong></p>)}</div></section>;
+ return <section className="series-score"><h3>{completed?'আসর শেষ':`আসর · ${bn(series.total)} রাউন্ড`}</h3><p>প্রতি জয়ে ১ পয়েন্ট। বাকি রাউন্ডে আর কেউ ধরতে না পারলে আগেই আসর জয়। সমান সর্বোচ্চ স্কোর হলে যৌথ চ্যাম্পিয়ন।</p>{completed&&<p className="series-champion">{leaders.length?(leaders.length>1?'যৌথ চ্যাম্পিয়ন: ':'আসরের চ্যাম্পিয়ন: ')+leaders.join(', '):'এই আসরে কোনো বিজয়ী নেই।'}</p>}<table><thead><tr><th>খেলোয়াড়</th><th>জয় / পয়েন্ট</th></tr></thead><tbody>{ranked.map(p=><tr key={p.id}><td>{p.name}</td><td>{bn(p.wins)}</td></tr>)}</tbody></table>{!ranked.length&&<p>প্রথম রাউন্ড শুরু হলে স্কোরবোর্ড তৈরি হবে।</p>}<div className="round-results">{series.results.map(r=><p key={r.round}>রাউন্ড {bn(r.round)} <strong>{r.name}{r.winner?' জয়ী':''}</strong></p>)}</div></section>;
 }
 
 export function ChallengeAnimation({challenge,room,players,waiting,reveals=[]}:{challenge?:Game['challenge'];room:string;players:{id:string;name:string}[];waiting:{type:string;actor:string}|null;reveals?:NonNullable<Game['reveals']>}){

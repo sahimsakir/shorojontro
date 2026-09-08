@@ -38,13 +38,13 @@ test('attack effects name the correct target and cancelled bluffs do not emit at
 });
 test('series awards once, survives serialization, preserves standings through rematches and resets after finale',()=>{
  let g=newGame('ABC234','Series',false,2,'a','A');g.players.push({id:'b',name:'B',coins:2,cards:[],ready:true});configureSeries(g,3);g.players[0].ready=true;
- for(let round=1;round<=3;round++){
+ for(let round=1;round<=2;round++){
   start(g);assert.equal(g.series.round,round);assert.throws(()=>configureSeries(g,7));
   g.players[0].coins=7;g.players[1].cards[0].alive=false;act(g,'a',{action:'kill',target:'b'});respond(g,'b',{choice:'lose',index:1});
   assert.equal(g.series.results.length,round);assert.equal(g.series.scores[0].wins,round);
   tick(g,Date.now()+999999);assert.equal(g.series.scores[0].wins,round);
   g=JSON.parse(JSON.stringify(g));assert.equal(view(g,'b').series.scores[0].wins,round);
-  prepareRematch(g);if(round<3){assert.equal(g.series.round,round);assert.equal(g.series.scores[0].wins,round)}else{assert.equal(g.series.round,0);assert.deepEqual(g.series.results,[]);assert.deepEqual(g.series.scores,[])}
+  prepareRematch(g);if(round<2){assert.equal(g.series.round,round);assert.equal(g.series.scores[0].wins,round)}else{assert.equal(g.series.round,0);assert.deepEqual(g.series.results,[]);assert.deepEqual(g.series.scores,[])}
   g.players.forEach(p=>p.ready=true);
  }
 });

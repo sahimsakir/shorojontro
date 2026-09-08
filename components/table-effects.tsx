@@ -5,8 +5,8 @@ import {card,type Role} from '@/lib/game/cards';
 import {REACTIONS} from '@/lib/game/social';
 import type {Game} from '@/lib/game/engine';
 
-export function TableCard({role,alive}:{role:Role|null;alive:boolean}){
- return <div className={'table-card '+(!alive?'is-revealed':'')} aria-label={alive?(role?card(role).name:'গোপন কার্ড'):card(role!).name+' — নষ্ট'}><div className="table-card-inner"><img className="card-hidden-face" src="/cards/back.webp" alt=""/><img className="card-revealed-face" src={'/cards/'+(role??'back')+'.webp'} alt=""/></div>{!alive&&<span className="destroyed-label">নষ্ট</span>}</div>;
+export function TableCard({role,alive,reveal=false}:{role:Role|null;alive:boolean;reveal?:boolean}){
+ return <div className={'table-card '+(!alive||reveal?'is-revealed':'')} aria-label={alive?(role?card(role).name:'গোপন কার্ড'):card(role!).name+' — নষ্ট'}><div className="table-card-inner"><img className="card-hidden-face" src="/cards/back.webp" alt=""/><img className="card-revealed-face" src={'/cards/'+(role??'back')+'.webp'} alt=""/></div>{!alive&&<span className="destroyed-label">নষ্ট</span>}</div>;
 }
 
 export function TableEffects({attacks=[],reactions=[]}:{attacks?:Game['attacks'];reactions?:Game['reactions']}){
