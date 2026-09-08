@@ -43,6 +43,9 @@ try{
  const restored=await call(0,'/api/session');assert.equal(restored.room,code,'session reconnect finds room');
  const recovered=(await call(0,'/api/game?room='+restored.room)).game;
  assert.equal(recovered.series.round,1);assert.equal(recovered.series.total,3);assert.equal(recovered.claims[0].outcome,'accepted');assert.equal(recovered.players[0].id,users[0].id);
+ const reaction=await call(0,'/api/game',{op:'react',code,revision:0,reaction:'doubt'});assert.equal(reaction.status,200);assert.equal(reaction.game.phase,recovered.phase);assert.equal(reaction.game.reactions.at(-1).reaction,'doubt');
+ assert.equal((await call(0,'/api/game',{op:'react',code,reaction:'gg'})).status,400,'reaction cooldown enforced');
+ assert.equal((await call(6,'/api/game',{op:'react',code,reaction:'gg'})).status,403,'only room members react');
  const publicRoom=await call(6,'/api/game',{op:'create',name:'Public test',max:3,private:false});assert.equal(publicRoom.status,200);const list=await call(0,'/api/game');assert.equal(list.rooms.length,1);assert.equal(list.rooms[0].code,publicRoom.game.code);assert.equal(list.rooms[0].state,undefined);
 
  // Host-only bots, readiness, capacity, a one-human start and autonomous progress.
@@ -50,6 +53,7 @@ try{
  let joined=await call(0,'/api/game',{op:'join',code:botCode});
  assert.equal((await call(0,'/api/game',{op:'bots',code:botCode,revision:joined.game.revision,count:1})).status,400);
  let removed=await call(6,'/api/game',{op:'kick',code:botCode,revision:joined.game.revision,target:users[0].id});
+ removed=await call(6,'/api/game',{op:'botLevel',code:botCode,revision:removed.game.revision,level:'hard'});assert.equal(removed.status,200);assert.equal(removed.game.botDifficulty,'hard');
  result=await call(6,'/api/game',{op:'bots',code:botCode,revision:removed.game.revision,count:3});assert.equal(result.status,400);
  result=await call(6,'/api/game',{op:'bots',code:botCode,revision:removed.game.revision,count:2});assert.equal(result.status,200);botGame=result.game;
  assert.equal(botGame.players.filter(p=>p.bot&&p.ready).length,2);

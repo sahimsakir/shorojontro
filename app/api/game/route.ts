@@ -1,6 +1,6 @@
 import { rawDb } from '@/db/raw';
 import { json,session,originCheck,rateLimit,cleanName,passwordHash } from '@/lib/server';
-import { newGame,configureSeries,prepareRematch,addBots,phaseKey,start,act,respond,tick,leave,view,validRoles,GameError,type Game } from '@/lib/game/engine';
+import { newGame,react,setBotDifficulty,configureSeries,prepareRematch,addBots,phaseKey,start,act,respond,tick,leave,view,validRoles,GameError,type Game } from '@/lib/game/engine';
 interface Row{code:string;state:string;revision:number;password:string|null;updated:number}
 const read=(code:string)=>rawDb().prepare('SELECT code,state,revision,password,updated FROM rooms WHERE code=?').bind(code).first<Row>();
 const save=(g:Game,rev:number)=>{g.revision=rev+1;g.updated=Date.now();return rawDb().prepare('UPDATE rooms SET state=?,revision=?,updated=? WHERE code=? AND revision=?').bind(JSON.stringify(g),g.revision,g.updated,g.code,rev).run()};
@@ -13,8 +13,10 @@ export async function POST(req:Request){try{originCheck(req);const s=await sessi
  }
  const code=codeOf(b.code);for(let retry=0;retry<4;retry++){const row=await read(code);if(!row||row.updated<Date.now()-86400000)return json({error:'রুম পাওয়া যায়নি অথবা মেয়াদ শেষ।'},404);const g:Game=JSON.parse(row.state);
  if(b.op==='join'){const existing=g.players.find(p=>p.id===s.id&&!p.left);if(existing)return json({game:view(g,s.id)});if(g.status!=='waiting')throw Error('এই ম্যাচ শুরু হয়ে গেছে।');if(g.players.length>=g.max)throw Error('এই রুমে আসন খালি নেই।');if(row.password){const [salt,hash]=row.password.split(':');if(typeof b.password!=='string'||b.password.length>80||await passwordHash(b.password,salt)!==hash)throw Error('রুমের পাসওয়ার্ড সঠিক নয়।');}g.players.push({id:s.id,name:s.name,coins:2,cards:[],ready:false});}
- else{const me=g.players.find(p=>p.id===s.id&&!p.left);if(!me)return json({error:'আপনি এই রুমের সদস্য নন।'},403);if(b.revision!==row.revision&&!(['act','respond'].includes(b.op)&&typeof b.phase==='string'&&b.phase===phaseKey(g)))return json({error:'টেবিলের অবস্থা বদলেছে। আবার চাল দিন।',game:view(g,s.id)},409);if(b.op!=='leave'&&tick(g,Date.now(),false)){const timed=await save(g,row.revision);return json({error:'সময় শেষ হওয়ায় খেলা এগিয়ে গেছে।',...(timed.meta.changes?{game:view(g,s.id)}:{})},409);}
+ else{const me=g.players.find(p=>p.id===s.id&&!p.left);if(!me)return json({error:'আপনি এই রুমের সদস্য নন।'},403);if(b.op!=='react'&&b.revision!==row.revision&&!(['act','respond'].includes(b.op)&&typeof b.phase==='string'&&b.phase===phaseKey(g)))return json({error:'টেবিলের অবস্থা বদলেছে। আবার চাল দিন।',game:view(g,s.id)},409);if(b.op!=='leave'&&b.op!=='react'&&tick(g,Date.now(),false)){const timed=await save(g,row.revision);return json({error:'সময় শেষ হওয়ায় খেলা এগিয়ে গেছে।',...(timed.meta.changes?{game:view(g,s.id)}:{})},409);}
  if(b.op==='leave')leave(g,s.id);
+ else if(b.op==='react')react(g,s.id,b.reaction);
+ else if(b.op==='botLevel'){if(g.host!==s.id)throw Error('শুধু হোস্ট কম্পিউটার লেভেল বাছতে পারে।');setBotDifficulty(g,b.level);g.players.forEach(p=>p.ready=!!p.bot);}
  else if(b.op==='ready'){if(g.status!=='waiting')throw Error('খেলা শুরু হয়ে গেছে।');me.ready=b.ready===true;}
  else if(b.op==='series'){if(g.host!==s.id)throw Error('শুধু হোস্ট রাউন্ড বাছতে পারে।');configureSeries(g,Number(b.rounds));g.players.forEach(p=>p.ready=!!p.bot);}
  else if(b.op==='roles'){if(g.host!==s.id||g.status!=='waiting')throw Error('খেলার আগে শুধু হোস্ট চরিত্র বাছতে পারে।');if(!Array.isArray(b.roles)||!validRoles(b.roles))throw Error('১ নীল, ১ বেগুনি, ১ কালো ও ২ সবুজ চরিত্র বাছুন।');g.roles=b.roles;g.players.forEach(p=>p.ready=!!p.bot);}
@@ -25,6 +27,6 @@ export async function POST(req:Request){try{originCheck(req);const s=await sessi
  else if(b.op==='act')act(g,s.id,{action:b.action,target:b.target,role:b.role});
  else if(b.op==='respond')respond(g,s.id,{choice:b.choice,role:b.role,index:b.index,indices:b.indices});else throw Error('চালটি সঠিক নয়।');
  }
- const result=await save(g,row.revision);if(result.meta.changes)return json(b.op==='leave'?{left:true}:{game:view(g,s.id)});if(!['join','act','respond'].includes(b.op))return json({error:'অন্য খেলোয়াড় আগে চাল দিয়েছে। আবার চেষ্টা করুন।'},409);
+ const result=await save(g,row.revision);if(result.meta.changes)return json(b.op==='leave'?{left:true}:{game:view(g,s.id)});if(!['join','act','respond','react'].includes(b.op))return json({error:'অন্য খেলোয়াড় আগে চাল দিয়েছে। আবার চেষ্টা করুন।'},409);
  }return json({error:'টেবিল আপডেট হচ্ছে। আবার চেষ্টা করুন।'},409);
  }catch(e){if(!(e instanceof GameError))console.error('Game request',e);return json({error:e instanceof Error?e.message:'চালটি সম্পন্ন করা যায়নি।'},400)}}
