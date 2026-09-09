@@ -20,7 +20,7 @@ export function SeriesScore({series}:{series?:Series}){
  return <section className="series-score"><h3>{completed?'আসর শেষ':`আসর · ${bn(series.total)} রাউন্ড`}</h3><p>প্রতি জয়ে ১ পয়েন্ট। বাকি রাউন্ডে আর কেউ ধরতে না পারলে আগেই আসর জয়। সমান সর্বোচ্চ স্কোর হলে যৌথ চ্যাম্পিয়ন।</p>{completed&&<p className="series-champion">{leaders.length?(leaders.length>1?'যৌথ চ্যাম্পিয়ন: ':'আসরের চ্যাম্পিয়ন: ')+leaders.join(', '):'এই আসরে কোনো বিজয়ী নেই।'}</p>}<table><thead><tr><th>খেলোয়াড়</th><th>জয় / পয়েন্ট</th></tr></thead><tbody>{ranked.map(p=><tr key={p.id}><td>{p.name}</td><td>{bn(p.wins)}</td></tr>)}</tbody></table>{!ranked.length&&<p>প্রথম রাউন্ড শুরু হলে স্কোরবোর্ড তৈরি হবে।</p>}<div className="round-results">{series.results.map(r=><p key={r.round}>রাউন্ড {bn(r.round)} <strong>{r.name}{r.winner?' জয়ী':''}</strong></p>)}</div></section>;
 }
 
-export function ChallengeAnimation({challenge,room,players,waiting,reveals=[]}:{challenge?:Game['challenge'];room:string;players:{id:string;name:string}[];waiting:{type:string;actor:string}|null;reveals?:NonNullable<Game['reveals']>}){
+export function ChallengeAnimation({challenge,room,players,waiting,reveals=[],onBusyChange}:{onBusyChange?:(busy:boolean)=>void;challenge?:Game['challenge'];room:string;players:{id:string;name:string}[];waiting:{type:string;actor:string}|null;reveals?:NonNullable<Game['reveals']>}){
  const seen=useRef(new Set<string>()),queue=useRef<NonNullable<Game['reveals']>>([]);
  const [shown,setShown]=useState<NonNullable<Game['reveals']>[number]|null>(null);
  const [pulse,setPulse]=useState(0);
@@ -28,6 +28,7 @@ export function ChallengeAnimation({challenge,room,players,waiting,reveals=[]}:{
  useEffect(()=>{for(const r of reveals){if(!seen.current.has(r.id)){seen.current.add(r.id);if(Date.now()-r.at<12000)queue.current.push(r)}}if(!shown&&queue.current.length)setShown(queue.current.shift()!);},[reveals,shown,pulse]);
  useEffect(()=>{if(!shown)return;const t=setTimeout(()=>{setShown(null);setPulse(v=>v+1)},2800);return()=>clearTimeout(t)},[shown?.id]);
  const awaiting=waiting?.type==='loss';
+ useEffect(()=>{onBusyChange?.(!!shown||queue.current.length>0||awaiting)},[shown,awaiting,pulse,onBusyChange]);
  if(!shown&&(!challenge||!awaiting))return null;
  const name=(id:string)=>players.find(p=>p.id===id)?.name??'খেলোয়াড়';
  const role=shown?.role??(challenge?.truthful?challenge.role:'back');

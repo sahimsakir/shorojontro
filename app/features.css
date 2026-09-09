@@ -91,3 +91,9 @@
 .profile-menu-trigger{font-family:inherit;line-height:1.2;white-space:nowrap;box-sizing:border-box}.profile-menu-trigger svg{flex:none}.topbar [data-slot=dropdown-menu-content]{min-width:170px;background:#102c24!important;border-color:#78935e!important;color:#f3efdc!important;z-index:100}.topbar [data-slot=dropdown-menu-label]{color:#e5bb72;padding:9px 10px}.topbar [data-slot=dropdown-menu-item]{color:#f3efdc;padding:9px 10px;cursor:pointer}.topbar [data-slot=dropdown-menu-item]:focus{background:#28513b;color:#fff0c9}
 .victory-cards{display:flex;justify-content:center;align-items:flex-start;gap:20px;flex-wrap:wrap;width:100%;margin:18px auto 8px}.victory-cards>div{display:grid;justify-items:center;align-content:start;gap:6px;min-width:110px}.victory-cards img{display:block;width:110px;height:165px;object-fit:contain;border-radius:10px}.victory-cards p{margin:0;color:#ffe1a5;text-align:center;line-height:1.4;white-space:normal}
 @media(max-width:600px){.victory-cards{gap:12px}.victory-cards>div{min-width:82px}.victory-cards img{width:82px;height:123px}.victory-cards p{font-size:13px}.topbar [data-slot=dropdown-menu-content]{margin-right:4px}.profile-menu-trigger{min-height:34px!important}}
+
+/* Keep the victory heading aligned with the trophy and scores. */
+.game-dialog.victory-dialog [data-slot=dialog-header]{padding:0 32px;text-align:center;align-items:center;width:100%;min-width:0}
+.game-dialog.victory-dialog [data-slot=dialog-title],.game-dialog.victory-dialog [data-slot=dialog-description]{width:100%;text-align:center;overflow-wrap:anywhere}
+.game-dialog.victory-dialog [data-slot=dialog-title]{font-size:clamp(22px,5vw,28px);line-height:1.5}
+.game-dialog.victory-dialog [data-slot=dialog-description]{font-size:14px;line-height:1.7}
