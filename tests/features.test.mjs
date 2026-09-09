@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {build} from 'esbuild';
 await build({entryPoints:['lib/game/tutorial.ts','lib/game/engine.ts'],outdir:'.sites-runtime/features-tests',bundle:true,platform:'node',format:'esm',outExtension:{'.js':'.mjs'}});
 const {tutorialGame,tutorialMove}=await import('../.sites-runtime/features-tests/tutorial.mjs');
-const {newGame,start,configureSeries,prepareRematch,act,respond,tick,view}=await import('../.sites-runtime/features-tests/engine.mjs');
+const {newGame,start,configureTimers,configureSeries,prepareRematch,act,respond,tick,view}=await import('../.sites-runtime/features-tests/engine.mjs');
 test('six interactive lessons resolve actual game effects and preserve fifteen cards',()=>{
  const steps=[['income'],['bir'],['challenge'],['pass','block'],['nantu'],['orun','keep']];
  for(let lesson=0;lesson<steps.length;lesson++){
@@ -47,4 +47,14 @@ test('series awards once, survives serialization, preserves standings through re
   prepareRematch(g);if(round<2){assert.equal(g.series.round,round);assert.equal(g.series.scores[0].wins,round)}else{assert.equal(g.series.round,0);assert.deepEqual(g.series.results,[]);assert.deepEqual(g.series.scores,[])}
   g.players.forEach(p=>p.ready=true);
  }
+});
+
+test('custom timers validate and persist across turns, decisions and rematches',()=>{
+ const g=newGame('TIMERS','Timers',false,3,'a','A');g.players.push({id:'b',name:'B',cards:[],coins:2,ready:true},{id:'c',name:'C',cards:[],coins:2,ready:true});g.players[0].ready=true;
+ for(const input of [{turn:0,response:25,duel:30},{turn:60,response:181,duel:30},{turn:60,response:25,duel:12.5},null])assert.throws(()=>configureTimers(g,input));
+ configureTimers(g,{turn:90,response:45,duel:15});start(g);assert.ok(g.deadline>Date.now()+89000);assert.throws(()=>configureTimers(g,{turn:30,response:30,duel:30}));
+ act(g,'a',{action:'bir'});assert.ok(g.waiting.deadline>Date.now()+44000);respond(g,'b',{choice:'pass'});respond(g,'c',{choice:'pass'});assert.ok(g.deadline>Date.now()+89000);
+ assert.deepEqual(JSON.parse(JSON.stringify(g)).timers,{turn:90,response:45,duel:15});
+ const duo=newGame('DUOTIM','Timers',false,2,'a','A');duo.players.push({id:'b',name:'B',cards:[],coins:2,ready:true});duo.players[0].ready=true;configureTimers(duo,{turn:90,response:45,duel:15});start(duo);assert.ok(duo.deadline>Date.now()+14000&&duo.deadline<=Date.now()+15000);
+ duo.players[0].coins=7;duo.players[1].cards[0].alive=false;act(duo,'a',{action:'kill',target:'b'});respond(duo,'b',{choice:'lose',index:1});prepareRematch(duo);assert.equal(duo.timers.duel,15);
 });

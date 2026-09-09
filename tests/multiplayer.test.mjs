@@ -21,7 +21,7 @@ try{
  const duo=await mf.dispatchFetch('https://game.test/api/game',{method:'POST',headers:{cookie:users[0].cookie,'Content-Type':'application/json',Origin:'https://shorojontro-nine.vercel.app'},body:JSON.stringify({op:'create',name:'Two player',max:2,private:true,password:'secret42'})});
  assert.equal(duo.status,200);assert.equal((await duo.json()).game.max,2);
  for(let i=0;i<7;i++)assert.equal((await call(i,'/api/session',{name:'Player '+i})).status,200);
- let result=await call(0,'/api/game',{op:'create',name:'Private test',max:6,private:true,password:'secret42'});assert.equal(result.status,200,JSON.stringify(result));const code=result.game.code;
+ let result=await call(0,'/api/game',{op:'create',name:'Private test',max:6,private:true,password:'secret42',timers:{turn:90,response:45,duel:20}});assert.equal(result.status,200,JSON.stringify(result));assert.deepEqual(result.game.timers,{turn:90,response:45,duel:20});const code=result.game.code;
  assert.equal((await call(1,'/api/game')).rooms.length,0,'private rooms are hidden');
  assert.equal((await call(1,'/api/game?room='+code)).status,403,'nonmember cannot read state');
  assert.equal((await call(1,'/api/game',{op:'join',code,password:'wrong'})).status,400,'wrong password rejected');
