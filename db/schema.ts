@@ -1,3 +1,3 @@
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
-export const rooms=sqliteTable('rooms',{code:text('code').primaryKey(),name:text('name').notNull(),private:integer('private').notNull(),password:text('password'),state:text('state').notNull(),revision:integer('revision').notNull().default(0),updated:integer('updated').notNull()},t=>[index('idx_rooms_public_updated').on(t.private,t.updated)]);
-export const sessions=sqliteTable('sessions',{id:text('id').primaryKey(),name:text('name').notNull(),created:integer('created').notNull(),attempts:integer('attempts').notNull().default(0),window:integer('window').notNull().default(0)});
+import { pgTable, text, integer, bigint, index } from 'drizzle-orm/pg-core';
+export const rooms=pgTable('rooms',{code:text('code').primaryKey(),name:text('name').notNull(),private:integer('private').notNull(),password:text('password'),state:text('state').notNull(),revision:integer('revision').notNull().default(0),updated:bigint('updated',{mode:'number'}).notNull()},t=>[index('idx_rooms_public_updated').on(t.private,t.updated)]);
+export const sessions=pgTable('sessions',{id:text('id').primaryKey(),name:text('name').notNull(),created:bigint('created',{mode:'number'}).notNull(),attempts:integer('attempts').notNull().default(0),window:bigint('window_start',{mode:'number'}).notNull().default(0)});

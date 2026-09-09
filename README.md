@@ -1,3 +1,13 @@
+# Shorojontro: Vercel + PostgreSQL
+
+The production game now uses Next.js on Vercel and Neon PostgreSQL. Connect the Neon integration to the project so DATABASE_URL (or POSTGRES_URL) is supplied. Vercel runs the idempotent PostgreSQL schema migration before building. Preview deployments use isolated database branches when enabled in the integration.
+
+Local setup: install dependencies with `npm install`, pull the Vercel development environment into `.env.local`, run `npm run db:migrate`, then `npm run dev`. Do not commit `.env.local`. Run `npm test` for isolated PostgreSQL and game tests; `npm run build` verifies the Next.js build.
+
+The old Sites/D1 deployment is retained separately. Existing D1 rooms and sessions are not copied by this schema migration; new Vercel sessions and rooms are stored in PostgreSQL. No old database is deleted.
+
+---
+
 # Shorojontro
 
 A responsive Bengali bluffing card game for 2–6 human and computer players. Uses the user's custom nine-card artwork and confirmed house rules. Public lobby, password-protected private rooms, host-selected cast, ready checks, live polling, challenges, blocks, exchanges, tax, rematches and reconnection.

@@ -1,17 +1,17 @@
-import {DatabaseSync} from 'node:sqlite';
+import {PGlite} from '@electric-sql/pglite';
 import {build} from 'esbuild';
 import {readFileSync,mkdirSync} from 'node:fs';
 import assert from 'node:assert/strict';
-// Exercise the real route handlers against an isolated SQLite database, without network access.
-const sqlite=new DatabaseSync(':memory:');
-const db={prepare(sql){let values=[];const statement={bind(...v){values=v;return statement},async first(){return sqlite.prepare(sql).get(...values)??null},async all(){return {results:sqlite.prepare(sql).all(...values)}},async run(){const r=sqlite.prepare(sql).run(...values);return {success:true,meta:{changes:Number(r.changes)}}}};return statement}};
-globalThis.__gameTestDB=db;
+// Run the real PostgreSQL queries against an isolated PostgreSQL engine.
+const pg=new PGlite();
+process.env.DATABASE_URL='postgresql://test:test@localhost/test';
+globalThis.__gameTestQuery=async(sql,values)=>{const r=await pg.query(sql,values);return {rows:r.rows,rowCount:r.affectedRows??r.rows.length}};
 mkdirSync('.sites-runtime/api-tests',{recursive:true});
-await build({stdin:{contents:"import * as game from './app/api/game/route'; import * as session from './app/api/session/route'; export {game,session};",resolveDir:process.cwd(),loader:'ts'},outfile:'.sites-runtime/api-tests/routes.mjs',bundle:true,platform:'node',format:'esm',plugins:[{name:'test-d1',setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:'db',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export const env={DB:globalThis.__gameTestDB};'}))}}]});
+await build({stdin:{contents:"import * as game from './app/api/game/route'; import * as session from './app/api/session/route'; export {game,session};",resolveDir:process.cwd(),loader:'ts'},outfile:'.sites-runtime/api-tests/routes.mjs',bundle:true,platform:'node',format:'esm',plugins:[{name:'test-postgres',setup(b){b.onResolve({filter:/^@neondatabase\/serverless$/},()=>({path:'db',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export const neon=()=>({query:globalThis.__gameTestQuery});'}))}}]});
 const routes=await import('../.sites-runtime/api-tests/routes.mjs');
-const mf={async getD1Database(){return db},async dispatchFetch(url,init){const req=new Request(url,init);const group=new URL(url).pathname==='/api/session'?routes.session:routes.game;return group[req.method](req)},async dispose(){sqlite.close()}};
+const mf={async dispatchFetch(url,init){const req=new Request(url,init);const group=new URL(url).pathname==='/api/session'?routes.session:routes.game;return group[req.method](req)},async dispose(){await pg.close()}};
 try{
- const db=await mf.getD1Database('DB');for(const sql of readFileSync('drizzle/0000_organic_blizzard.sql','utf8').split('--> statement-breakpoint'))if(sql.trim())await db.prepare(sql).run();
+ await pg.exec(readFileSync('db/postgres.sql','utf8'));
  const users=[];for(let i=0;i<7;i++){const r=await mf.dispatchFetch('https://game.test/api/session');assert.equal(r.status,200,await r.clone().text());const cookie=r.headers.get('set-cookie').split(';')[0];const s=await r.json();users.push({cookie,id:s.id});}
  async function call(i,path,body){const r=await mf.dispatchFetch('https://game.test'+path,{method:body?'POST':'GET',headers:{cookie:users[i].cookie,...(body?{'Content-Type':'application/json',Origin:'https://game.test'}:{})},body:body?JSON.stringify(body):undefined});const data=await r.json();return {status:r.status,...data}}
  for(const origin of ['https://shorojontro-nine.vercel.app','https://unrelated.vercel.app']){
@@ -61,8 +61,8 @@ try{
  result=await call(6,'/api/game',{op:'start',code:botCode,revision:result.game.revision});assert.equal(result.status,200);botGame=result.game;
  // A bot accepting the same claim must not invalidate the human's response.
  result=await call(6,'/api/game',{op:'act',code:botCode,revision:botGame.revision,phase:botGame.phase,action:'income'});assert.equal(result.status,200);
- let raw=JSON.parse(sqlite.prepare('SELECT state FROM rooms WHERE code=?').get(botCode).state);raw.botAt=0;
- sqlite.prepare('UPDATE rooms SET state=? WHERE code=?').run(JSON.stringify(raw),botCode);
+ let raw=JSON.parse((await pg.query('SELECT state FROM rooms WHERE code=$1',[botCode])).rows[0].state);raw.botAt=0;
+ await pg.query('UPDATE rooms SET state=$1 WHERE code=$2',[JSON.stringify(raw),botCode]);
  result=await call(6,'/api/game?room='+botCode);assert.equal(result.status,200);assert.ok(result.game.revision>raw.revision,'bot progresses on polling');assert.ok(result.game.players.filter(p=>p.bot).every(p=>p.cards.every(c=>!c.alive||c.role===null)));
  // Existing six-human room: concurrent accept requests on one phase both commit.
  g=(await call(2,'/api/game?room='+code)).game;
