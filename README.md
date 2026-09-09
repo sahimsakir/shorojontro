@@ -1,3 +1,13 @@
+## Accounts and room retention
+
+- Open the profile menu to create an account, log in, or view your statistics. Guests receive an automatic `Guest_<random number>` name. Room creation/join uses the current identity.
+- Registration keeps the current guest player ID and its results. Logging into an existing account uses that account’s history instead; separate guest histories are not merged.
+- Username login is case-insensitive. Passwords use salted PBKDF2-SHA256 (600,000 iterations). Only hashed, revocable session tokens are stored. Remembered login lasts 30 days; unchecked uses a browser-session cookie with a 12-hour server expiry. No password recovery/email service is configured.
+- Statistics count completed rounds started after this update. Accepted claims without the living role count as successful bluffs; catching a false claim counts as a successful challenge. Round IDs and an atomic room/result write prevent duplicate totals. Private round counters are stripped from API game views.
+- Cleanup runs on lobby traffic/create requests, at most once per five minutes using a database lease. Idle waiting rooms expire after 2 hours; finished rooms after 24 hours. Member polling refreshes activity once per minute. Playing rooms are never deleted by cleanup. Without traffic cleanup waits until the next request. Results survive room removal.
+- PostgreSQL migrations run automatically before Vercel builds. No new environment variables or paid services are required for accounts.
+- Verify: `node --test tests/accounts.test.mjs tests/game.test.mjs tests/features.test.mjs tests/feedback.test.mjs tests/multiplayer.test.mjs` and `npm run build`.
+
 # Shorojontro: Vercel + PostgreSQL
 
 The production game now uses Next.js on Vercel and Neon PostgreSQL. Connect the Neon integration to the project so DATABASE_URL (or POSTGRES_URL) is supplied. Vercel runs the idempotent PostgreSQL schema migration before building. Preview deployments use isolated database branches when enabled in the integration.

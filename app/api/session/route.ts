@@ -1,4 +1,14 @@
-import { rawDb } from '@/db/raw';
-import { session,json,digest,cleanName,originCheck,rateLimit } from '@/lib/server';
-export async function GET(req:Request){try{const s=await session(req);if(s){const current=await rawDb().prepare("SELECT code FROM rooms WHERE updated > ? AND EXISTS (SELECT 1 FROM jsonb_array_elements(state::jsonb->'players') p WHERE p.value->>'id' = ? AND COALESCE((p.value->>'left')::boolean,false) = false) ORDER BY updated DESC LIMIT 1").bind(Date.now()-86400000,s.id).first<{code:string}>();return json({id:s.id,name:s.name,room:current?.code??null})}const token=crypto.randomUUID()+crypto.randomUUID();const id=await digest(token);await rawDb().prepare('INSERT INTO sessions (id,name,created,attempts,window_start) VALUES (?,?,?,0,0)').bind(id,'Guest',Date.now()).run();return json({id,name:'Guest',room:null},200,{'Set-Cookie':`sj_session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000${new URL(req.url).protocol==='https:'?'; Secure':''}`})}catch(e){return json({error:e instanceof Error?e.message:'সংযোগ করা যায়নি।'},503)}}
-export async function POST(req:Request){try{originCheck(req);const s=await session(req);if(!s)return json({error:'আবার সংযোগ করতে পাতা রিলোড করুন।'},401);await rateLimit(s.id);const b=await req.json() as {name?:unknown};const name=cleanName(b.name,20);await rawDb().prepare('UPDATE sessions SET name=? WHERE id=?').bind(name,s.id).run();return json({id:s.id,name})}catch(e){return json({error:e instanceof Error?e.message:'নাম সংরক্ষণ করা যায়নি।'},400)}}
+import {rawDb} from '@/db/raw';
+import {session,json,cleanName,originCheck,rateLimit} from '@/lib/server';
+import {guest,currentRoom,guestName} from '@/lib/accounts';
+export async function GET(req:Request){try{
+ const s=await session(req);if(!s)return guest(req);
+ if(!s.username&&s.name==='Guest'){s.name=guestName();await rawDb().prepare('UPDATE sessions SET name=? WHERE id=?').bind(s.name,s.id).run();}
+ return json({id:s.id,name:s.name,username:s.username,room:await currentRoom(s.id)});
+}catch{ return json({error:'সংযোগ করা যায়নি। আবার চেষ্টা করুন।'},503)}}
+export async function POST(req:Request){try{
+ originCheck(req);const s=await session(req);if(!s)return json({error:'পাতা রিলোড করে আবার চেষ্টা করুন।'},401);
+ await rateLimit(s.id);const b=await req.json() as {name?:unknown};
+ const name=cleanName(b.name,20);await rawDb().prepare('UPDATE sessions SET name=? WHERE id=?').bind(name,s.id).run();
+ return json({id:s.id,name,username:s.username});
+}catch(e){return json({error:e instanceof Error?e.message:'নাম সংরক্ষণ করা যায়নি।'},400)}}

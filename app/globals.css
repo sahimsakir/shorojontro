@@ -149,3 +149,23 @@ h1,h2,h3,button,input,[data-slot=dialog-title]{font-family:inherit}
 .compact-match .action-grid>button{min-height:44px}
 .compact-match .resolution{padding:9px}
 }
+
+/* Account dialogs keep one explicit column, independent of table/popup grids. */
+.game-dialog.account-dialog{display:flex;flex-direction:column;width:min(480px,calc(100vw - 24px));max-width:480px;max-height:calc(100dvh - 24px);overflow-y:auto;overflow-x:hidden;gap:18px;padding:24px;grid-template-columns:none;background:#142a24;color:#f7f0dc;line-height:1.6}
+.account-dialog [data-slot="dialog-header"]{display:block;padding-right:42px;text-align:left}
+.account-dialog [data-slot="dialog-title"]{font-size:1.5rem;line-height:1.45;margin:0 0 6px;overflow-wrap:anywhere}
+.account-dialog [data-slot="dialog-description"]{font-size:1rem;line-height:1.6;margin:0;color:#c8d7cc}
+.account-form,.account-profile{display:flex;flex-direction:column;gap:14px;min-width:0;width:100%}
+.account-form>label{display:flex;flex-direction:column;gap:6px;font-size:1rem}
+.account-form input{width:100%;min-width:0;background:#0c1d19;border:1px solid #6e8773;border-radius:10px;padding:10px 12px;font-size:1rem;color:#fff;line-height:1.5}
+.account-form input:focus-visible{outline:2px solid #f1c973;outline-offset:2px}
+.account-remember{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.account-remember label{cursor:pointer}.account-remember small{display:block;font-size:.875rem;color:#c8d7cc}
+.account-dialog .account-help{font-size:.875rem;line-height:1.65;margin:0;color:#c8d7cc;overflow-wrap:anywhere}
+.account-identity{display:flex;gap:14px;align-items:center;min-width:0}.account-identity>svg{width:44px;height:44px;flex-shrink:0;color:#f1c973}.account-identity>div{min-width:0}.account-identity h3{margin:0;font-size:1.3rem;overflow-wrap:anywhere}.account-identity p{margin:0;color:#c8d7cc;overflow-wrap:anywhere}
+.account-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.account-stats>div{display:flex;flex-direction:column;gap:3px;padding:14px;background:#203c31;border:1px solid #54785e;border-radius:12px;text-align:center}.account-stats strong{font-size:1.8rem;color:#f1c973}.account-stats span{font-size:1rem}
+.account-explainer{font-size:.875rem;line-height:1.65;color:#c8d7cc}.account-explainer summary{cursor:pointer;color:#f1c973}.account-explainer p{margin:10px 0}
+.account-dialog button{white-space:normal;overflow-wrap:anywhere;min-width:0;line-height:1.5}.account-dialog .full{min-height:44px;flex-shrink:0}.account-dialog .text-button{font-size:.9rem;min-height:40px}
+.account-dropdown{max-width:min(300px,calc(100vw - 24px))}.account-dropdown [data-slot="dropdown-menu-label"]{overflow-wrap:anywhere;white-space:normal}.account-dropdown .account-menu-note{font-size:.8rem;font-weight:normal;max-width:260px}
+.room-identity{display:flex;align-items:center;gap:8px;font-size:.95rem;overflow-wrap:anywhere;color:#ead196}
+@media(max-width:400px){.game-dialog.account-dialog{padding:18px;gap:14px}.account-stats>div{padding:10px}.account-dialog [data-slot="dialog-title"]{font-size:1.35rem}}
