@@ -2,7 +2,7 @@
 
 - Open the profile menu to create an account, log in, or view your statistics. Guests receive an automatic `Guest_<random number>` name. Room creation/join uses the current identity.
 - Registration keeps the current guest player ID and its results. Logging into an existing account uses that account’s history instead; separate guest histories are not merged.
-- Username login is case-insensitive. Passwords use salted PBKDF2-SHA256 (600,000 iterations). Only hashed, revocable session tokens are stored. Remembered login lasts 30 days; unchecked uses a browser-session cookie with a 12-hour server expiry. No password recovery/email service is configured.
+- Username login is case-insensitive. Passwords use salted PBKDF2-SHA256 (600,000 iterations). Only hashed, revocable session tokens are stored. Remembered server login lasts 50 years (browsers may cap or clear cookies sooner; returning visitors renew their long-lived cookie within the server expiry); unchecked uses a browser-session cookie with a 12-hour server expiry. No password recovery/email service is configured.
 - Statistics count completed rounds started after this update. Accepted claims without the living role count as successful bluffs; catching a false claim counts as a successful challenge. Round IDs and an atomic room/result write prevent duplicate totals. Private round counters are stripped from API game views.
 - Cleanup runs on lobby traffic/create requests, at most once per five minutes using a database lease. Idle waiting rooms expire after 2 hours; finished rooms after 24 hours. Member polling refreshes activity once per minute. Playing rooms are never deleted by cleanup. Without traffic cleanup waits until the next request. Results survive room removal.
 - PostgreSQL migrations run automatically before Vercel builds. No new environment variables or paid services are required for accounts.
@@ -54,3 +54,5 @@ Actions and responses include a phase token: stale revisions may still be accept
 ## Game table interface
 
 The Bengali start menu leads directly to room creation or joining. Match seating surrounds the central deck, with life markers, active-seat highlights, coins, the private hand and a dedicated decision panel. Targeted actions open a confirmation picker for any living opponent. Attack targets are announced before a role challenge. Victims select their own lost card using artwork; robbery victims can claim Kalu or Petuk to block their own loss, subject to challenge. Mobile layouts stack the board, hand and controls.
+
+Room invitations support WhatsApp, native Web Share (installed apps), and copy/select-link fallback. Invitations never include room passwords.

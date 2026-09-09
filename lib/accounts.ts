@@ -16,9 +16,9 @@ export async function authLimit(key:string){
 }
 export async function issueLogin(req:Request,id:string,remember:boolean){
  const token=crypto.randomUUID()+crypto.randomUUID(),now=Date.now();
- await rawDb().prepare('INSERT INTO login_tokens (token_hash,player_id,expires) VALUES (?,?,?)').bind(await digest(token),id,now+(remember?30*86400000:12*3600000)).run();
+ await rawDb().prepare('INSERT INTO login_tokens (token_hash,player_id,expires) VALUES (?,?,?)').bind(await digest(token),id,now+(remember?50*365.25*86400000:12*3600000)).run();
  const old=cookieToken(req);if(old)await rawDb().prepare('DELETE FROM login_tokens WHERE token_hash=?').bind(await digest(old)).run();
- return `sj_session=${token}; Path=/; HttpOnly; SameSite=Strict${remember?'; Max-Age=2592000':''}${new URL(req.url).protocol==='https:'?'; Secure':''}`;
+ return `sj_session=${token}; Path=/; HttpOnly; SameSite=Strict${remember?'; Max-Age=1577880000':''}${new URL(req.url).protocol==='https:'?'; Secure':''}`;
 }
 export const guestName=()=> 'Guest_'+crypto.getRandomValues(new Uint32Array(1))[0].toString().padStart(6,'0');
 export async function guest(req:Request){
