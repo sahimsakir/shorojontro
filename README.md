@@ -1,3 +1,27 @@
+## Run entirely locally (app + PostgreSQL)
+
+Requires Node 22.13+ and Docker with Compose v2. Vercel login is not required.
+
+```bash
+git pull origin main
+npm ci
+```
+
+Create `.env.local` from `config/local.env.example`. If `.env.local` already contains Neon credentials, keep a backup outside Git, then replace its `DATABASE_URL` with the example and set `DB_DRIVER=postgres`. Do not run local migrations with your production URL.
+
+```bash
+cp -n config/local.env.example .env.local
+npm run db:local:up
+npm run db:migrate
+npm run dev
+```
+
+Open http://localhost:3000. The database is available at `127.0.0.1:5433`, database/user `shorojontro`, local-only password `shorojontro_local_only`. Docker stores data in a persistent named volume. No seed or separate backend server is needed. Cloud data is not copied into the local database.
+
+Next time run `npm run db:local:up` and `npm run dev`. Stop PostgreSQL with `npm run db:local:down`; this preserves the data. View startup issues with `npm run db:local:logs`. Avoid `docker compose down -v` unless you intend to permanently erase local data.
+
+If PostgreSQL is already installed, skip Docker, create a database/user yourself, set its connection URL in `.env.local` and keep `DB_DRIVER=postgres`, then run migration/dev. For Vercel, leave `DB_DRIVER` unset (defaults to Neon) and retain the managed Neon URL. Restart the dev server after changing environment variables.
+
 ## Accounts and room retention
 
 - Open the profile menu to create an account, log in, or view your statistics. Guests receive an automatic `Guest_<random number>` name. Room creation/join uses the current identity.

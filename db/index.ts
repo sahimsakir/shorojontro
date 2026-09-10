@@ -1,9 +1,9 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from "./schema";
-
-export function getDb() {
-  const url = process.env.DATABASE_URL || process.env.POSTGRES_URL;
-  if (!url) throw new Error('Database connection is not configured.');
-  return drizzle(neon(url), { schema });
+import {neon} from '@neondatabase/serverless';
+import {drizzle as neonDrizzle} from 'drizzle-orm/neon-http';
+import {drizzle as postgresDrizzle} from 'drizzle-orm/node-postgres';
+import {databaseDriver,databaseUrl,postgresPool} from './connection';
+import * as schema from './schema';
+export async function getDb(){
+ if(databaseDriver()==='postgres')return postgresDrizzle(await postgresPool(),{schema});
+ return neonDrizzle(neon(databaseUrl()),{schema});
 }

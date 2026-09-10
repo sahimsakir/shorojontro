@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shorojontro
+      POSTGRES_USER: shorojontro
+      POSTGRES_PASSWORD: shorojontro_local_only
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - shorojontro_local_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shorojontro -d shorojontro"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+volumes:
+  shorojontro_local_data:
