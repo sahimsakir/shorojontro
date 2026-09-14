@@ -169,3 +169,8 @@ h1,h2,h3,button,input,[data-slot=dialog-title]{font-family:inherit}
 .account-dropdown{max-width:min(300px,calc(100vw - 24px))}.account-dropdown [data-slot="dropdown-menu-label"]{overflow-wrap:anywhere;white-space:normal}.account-dropdown .account-menu-note{font-size:.8rem;font-weight:normal;max-width:260px}
 .room-identity{display:flex;align-items:center;gap:8px;font-size:.95rem;overflow-wrap:anywhere;color:#ead196}
 @media(max-width:400px){.game-dialog.account-dialog{padding:18px;gap:14px}.account-stats>div{padding:10px}.account-dialog [data-slot="dialog-title"]{font-size:1.35rem}}
+.character-clip{position:absolute;z-index:35;left:50%;top:50%;transform:translate(-50%,-50%);width:clamp(110px,18vw,170px);max-height:90%;overflow:hidden;border:2px solid #e0b969;border-radius:18px;background:#10221b;box-shadow:0 8px 35px #000b;pointer-events:none;animation:clip-arrive .2s ease-out}
+.character-clip video{display:block;width:100%;max-height:240px;aspect-ratio:9/16;object-fit:contain;background:#10221b}
+.character-clip>div{display:flex;flex-direction:column;padding:6px 8px;text-align:center;color:#fff5d4;font-size:12px;line-height:1.45;overflow-wrap:anywhere}.character-clip strong{color:#f2c970}
+@keyframes clip-arrive{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.character-clip{animation:none}}
