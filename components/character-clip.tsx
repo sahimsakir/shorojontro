@@ -11,11 +11,11 @@ export function CharacterClip({clip}:{clip:NonNullable<Game['characterClip']>}){
   const play=async()=>{if(!canPlay)return;el.muted=!sound.current;try{await el.play();if(!cancelled)setNeedsTap(false)}catch{if(cancelled)return;el.muted=true;if(sound.current)setNeedsTap(true);void el.play().catch(()=>{})}};
   const read=()=>{try{sound.current=JSON.parse(localStorage.getItem('sj-feedback-v1')??'{}').sound===true}catch{sound.current=false}};
   const changed=(event:Event)=>{if(event instanceof CustomEvent)sound.current=event.detail?.sound===true;else read();el.muted=!sound.current;if(!sound.current)setNeedsTap(false);else void play()};
-  const start=()=>{el.currentTime=Math.max(0,(Date.now()-clip.at-650)/1000);void play()};
+  const start=()=>{el.currentTime=Math.max(0,(Date.now()-clip.at-1100)/1000);void play()};
   read();el.muted=!sound.current;
   window.addEventListener('sj-feedback-change',changed);window.addEventListener('storage',changed);
   setFlipped(false);setReady(false);
-  const timer=window.setTimeout(()=>{canPlay=true;setFlipped(true);if(el.readyState>=1)start()},650);
+  const timer=window.setTimeout(()=>{canPlay=true;setFlipped(true);if(el.readyState>=1)start()},1100);
   el.addEventListener('loadedmetadata',start);
   return()=>{cancelled=true;window.clearTimeout(timer);window.removeEventListener('sj-feedback-change',changed);window.removeEventListener('storage',changed);el.removeEventListener('loadedmetadata',start);el.pause()};
  },[clip.id,clip.at]);
