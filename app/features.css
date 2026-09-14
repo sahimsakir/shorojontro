@@ -97,3 +97,6 @@
 .game-dialog.victory-dialog [data-slot=dialog-title],.game-dialog.victory-dialog [data-slot=dialog-description]{width:100%;text-align:center;overflow-wrap:anywhere}
 .game-dialog.victory-dialog [data-slot=dialog-title]{font-size:clamp(22px,5vw,28px);line-height:1.5}
 .game-dialog.victory-dialog [data-slot=dialog-description]{font-size:14px;line-height:1.7}
+
+.topbar .profile-menu-trigger{min-height:40px;justify-content:center}.profile-menu-trigger .profile-chevron{display:block!important;width:16px;height:16px;flex:0 0 16px;transition:transform .18s ease}.profile-menu-trigger[data-state="open"] .profile-chevron{transform:rotate(180deg)}
+@media(prefers-reduced-motion:reduce){.profile-menu-trigger .profile-chevron{transition:none}}
