@@ -174,3 +174,10 @@ h1,h2,h3,button,input,[data-slot=dialog-title]{font-family:inherit}
 .character-clip>div{display:flex;flex-direction:column;padding:6px 8px;text-align:center;color:#fff5d4;font-size:12px;line-height:1.45;overflow-wrap:anywhere}.character-clip strong{color:#f2c970}
 @keyframes clip-arrive{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.character-clip{animation:none}}
+/* Soft entrance keeps the small video frame anchored to the board. */
+.character-clip{animation:clip-arrive .42s cubic-bezier(.22,1,.36,1) both;transform-origin:center}
+@keyframes clip-arrive{from{opacity:0;transform:translate(-50%,-46%) scale(.88)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.character-clip video{opacity:.75;transition:opacity .25s ease}
+.character-clip.clip-ready video{opacity:1}
+.character-clip .clip-sound-button{pointer-events:auto;width:100%;min-height:38px;border:0;background:#ead094;color:#14261b;font-size:12px;line-height:1.4;padding:6px;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.character-clip{animation:none}.character-clip video{transition:none}}
