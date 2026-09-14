@@ -181,3 +181,7 @@ h1,h2,h3,button,input,[data-slot=dialog-title]{font-family:inherit}
 .character-clip.clip-ready video{opacity:1}
 .character-clip .clip-sound-button{pointer-events:auto;width:100%;min-height:38px;border:0;background:#ead094;color:#14261b;font-size:12px;line-height:1.4;padding:6px;cursor:pointer}
 @media(prefers-reduced-motion:reduce){.character-clip{animation:none}.character-clip video{transition:none}}
+
+.game-dialog.install-dialog{display:flex;flex-direction:column;gap:18px;width:min(420px,calc(100vw - 24px));max-height:85dvh;overflow:auto;text-align:left;padding:24px}.install-dialog ol{padding-left:22px;line-height:1.8}.install-dialog p{line-height:1.7}.install-dialog [data-slot="dialog-header"]{padding-right:36px}
+
+@media(display-mode:standalone){.install-menu-item{display:none}}
